@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { return isSignedIn() && request.auth.token.email_verified == true && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    function isValidPageInfo(data) {
+      return data.keys().hasAll(['title']) 
+        && data.title is string && data.title.size() <= 200
+        && (data.keys().hasAny(['path']) == false || (data.path is string && data.path.size() <= 200))
+        && (data.keys().hasAny(['updatedAt']) == false || data.updatedAt is number);
+    }
+
+    function isValidPageBlock(data) {
+      return data.keys().hasAll(['name'])
+        && data.name is string && data.name.size() <= 200
+        && (data.keys().hasAny(['title']) == false || (data.title is string && data.title.size() <= 500))
+        && (data.keys().hasAny(['subtitle']) == false || (data.subtitle is string && data.subtitle.size() <= 500))
+        && (data.keys().hasAny(['description']) == false || (data.description is string && data.description.size() <= 10000))
+        && (data.keys().hasAny(['content']) == false || (data.content is string && data.content.size() <= 50000))
+        && (data.keys().hasAny(['mediaUrl']) == false || (data.mediaUrl is string && data.mediaUrl.size() <= 2000))
+        && (data.keys().hasAny(['mediaUrl2']) == false || (data.mediaUrl2 is string && data.mediaUrl2.size() <= 2000))
+        && (data.keys().hasAny(['updatedAt']) == false || data.updatedAt is number);
+    }
+
+    match /admins/{userId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      // No one can write admins via client SDKs.
+    }
+
+    match /pages/{pageId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidPageInfo(incoming());
+      allow update: if isAdmin() && isValidPageInfo(incoming()) && (
+        incoming().diff(existing()).affectedKeys().hasOnly(['title', 'path', 'updatedAt'])
+      );
+      allow delete: if isAdmin();
+      
+      match /blocks/{blockId} {
+        allow read: if true;
+        allow create: if isAdmin() && isValidPageBlock(incoming());
+        allow update: if isAdmin() && isValidPageBlock(incoming()) && (
+          incoming().diff(existing()).affectedKeys().hasOnly(['name', 'title', 'subtitle', 'description', 'content', 'mediaUrl', 'mediaUrl2', 'updatedAt'])
+        );
+        allow delete: if isAdmin();
+      }
+    }
+  }
+}

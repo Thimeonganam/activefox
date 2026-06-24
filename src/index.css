@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Oswald:wght@500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand-orange: #FF6129;
+  --color-brand-red: #FC3B00;
+  --color-brand-light: #FF7145;
+  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
+  --font-monument: "Oswald", "Impact", sans-serif;
+  --font-seasons: "Playfair Display", ui-serif, Georgia, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-black text-white font-sans overflow-x-hidden;
+}

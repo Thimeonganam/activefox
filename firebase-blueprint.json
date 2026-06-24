@@ -1,0 +1,41 @@
+{
+  "entities": {
+    "pageInfo": {
+      "title": "Page Info",
+      "description": "Metadata for a page",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "path": { "type": "string" },
+        "updatedAt": { "type": "number", "description": "Timestamp" }
+      },
+      "required": ["title"]
+    },
+    "pageBlock": {
+      "title": "Page Block",
+      "description": "Content block for a specific page section",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "title": { "type": "string", "description": "Optional title" },
+        "subtitle": { "type": "string", "description": "Optional subtitle" },
+        "description": { "type": "string" },
+        "content": { "type": "string" },
+        "mediaUrl": { "type": "string", "description": "Optional visual media URL" },
+        "mediaUrl2": { "type": "string", "description": "Secondary visual media URL" },
+        "updatedAt": { "type": "number", "description": "Timestamp" }
+      },
+      "required": ["name"]
+    }
+  },
+  "firestore": {
+    "pages/{pageId}": {
+      "schema": { "$ref": "#/entities/pageInfo" },
+      "description": "Metadata for generic pages"
+    },
+    "pages/{pageId}/blocks/{blockId}": {
+      "schema": { "$ref": "#/entities/pageBlock" },
+      "description": "Content blocks for a specific page"
+    }
+  }
+}
