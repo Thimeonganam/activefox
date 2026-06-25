@@ -27,6 +27,7 @@ import DoKhopLP from "./landing/DoKhopLP";
 import FoxRunLP from "./landing/FoxRunLP";
 import HyroxLP from "./landing/HyroxLP";
 import GymLP from "./landing/GymLP";
+import FoxActivateLP from "./landing/FoxActivateLP";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -186,6 +187,7 @@ function AppContent() {
         <Route path="/landing/fox-run" element={<FoxRunLP />} />
         <Route path="/landing/hyrox" element={<HyroxLP />} />
         <Route path="/landing/gym" element={<GymLP />} />
+        <Route path="/landing/fox-activate" element={<FoxActivateLP />} />
       </Routes>
       {!pathname.startsWith('/landing/') && <Footer />}
       {!pathname.startsWith('/landing/') && !pathname.startsWith('/cms') && <FloatingContact />}
